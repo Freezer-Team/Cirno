@@ -10,6 +10,7 @@ espressoCore = "3.7.0"
 lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.13.0"
 composeBom = "2026.03.01"
+material-icons-core = "1.7.8"
 haze = "1.7.2"
 lombok = "1.18.44"
 
@@ -30,6 +31,7 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-material-icons-core = { group = "androidx.compose.material", name = "material-icons-core" }
 chrisbanes-haze = { group = "dev.chrisbanes.haze", name = "haze", version.ref = "haze" }
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
 
