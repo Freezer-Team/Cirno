@@ -55,4 +55,11 @@ public class AppRecord {
             return getUserId() == appRecord.getUserId() && getPackageName().equals(appRecord.getPackageName());
         return false;
     }
+
+    @Override
+    public int hashCode() {
+        int userId = getUserId();
+        String packageName = getPackageName();
+        return ((Integer.hashCode(userId) + 59) * 59) + (packageName == null ? 43 : packageName.hashCode());
+    }
 }
