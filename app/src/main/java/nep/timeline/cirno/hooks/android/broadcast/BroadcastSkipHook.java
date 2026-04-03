@@ -6,9 +6,10 @@ import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
 import nep.timeline.cirno.framework.AbstractMethodHook;
 import nep.timeline.cirno.framework.MethodHook;
+import nep.timeline.cirno.log.Log;
 import nep.timeline.cirno.services.ProcessService;
-import nep.timeline.cirno.utils.SystemChecker;
 import nep.timeline.cirno.virtuals.ProcessRecord;
+import nep.timeline.cirno.utils.SystemChecker;
 
 public class BroadcastSkipHook extends MethodHook {
     public BroadcastSkipHook(ClassLoader classLoader) {
@@ -26,10 +27,10 @@ public class BroadcastSkipHook extends MethodHook {
     }
 
     @Override
-    public Object[] getTargetParam() {
+    public Object[] getTargetParam() {        
         if (SystemChecker.isVivo(classLoader))
             return new Object[] { "com.android.server.am.BroadcastRecord", "com.android.server.am.BroadcastFilter", boolean.class, int.class, "com.android.server.am.IVivoBroadcastQueueModern" };
-        return new Object[] { "com.android.server.am.BroadcastRecord", "com.android.server.am.BroadcastFilter" };
+        return new Object[] { "com.android.server.am.BroadcastRecord", "com.android.server.am.BroadcastFilter", boolean.class };
     }
 
     @Override
@@ -37,27 +38,39 @@ public class BroadcastSkipHook extends MethodHook {
         return new AbstractMethodHook() {
             @Override
             protected void afterMethod(MethodHookParam param) {
-                if (param.getResult() != null)
-                    return;
+                try {
+                    // ✅ 安全地获取返回值
+                    Object result = param.getResult();
+                    if (result != null) {
+                        return;
+                    }
 
-                Object filter = param.args[1];
-                if (filter == null)
-                    return;
+                    Object filter = param.args[1];
+                    if (filter == null) {
+                        return;
+                    }
 
-                Object receiver = XposedHelpers.getObjectField(filter, "receiverList");
-                if (receiver == null)
-                    return;
+                    Object receiver = XposedHelpers.getObjectField(filter, "receiverList");
+                    if (receiver == null) {
+                        return;
+                    }
 
-                Object app = XposedHelpers.getObjectField(receiver, "app");
-                if (app == null)
-                    return;
+                    Object app = XposedHelpers.getObjectField(receiver, "app");
+                    if (app == null) {
+                        return;
+                    }
 
-                ProcessRecord processRecord = ProcessService.getProcessRecord(app);
-                if (processRecord == null)
-                    return;
+                    ProcessRecord processRecord = ProcessService.getProcessRecord(app);
+                    if (processRecord == null) {
+                        return;
+                    }
 
-                if (processRecord.isFrozen())
-                    param.setResult("Skipping deliver [Cirno]: frozen process");
+                    if (processRecord.isFrozen()) {
+                        param.setResult("Skipping deliver [Cirno]: frozen process");
+                    }
+                } catch (Exception e) {
+                    Log.e("BroadcastSkipHook 处理失败", e);
+                }
             }
         };
     }
