@@ -4,11 +4,11 @@ import android.media.AudioPlaybackConfiguration;
 
 import java.util.List;
 
-import de.robv.android.xposed.XC_MethodHook;
 import nep.timeline.cirno.entity.AppRecord;
-import nep.timeline.cirno.framework.AbstractMethodHook;
 import nep.timeline.cirno.framework.MethodHook;
 import nep.timeline.cirno.handlers.AudioHandler;
+import nep.timeline.cirno.reflect.CakeHooker;
+import nep.timeline.cirno.reflect.CakeReflection;
 import nep.timeline.cirno.services.AppService;
 import nep.timeline.cirno.threads.Handlers;
 import nep.timeline.cirno.virtuals.AudioPlaybackConfigurationReflect;
@@ -30,20 +30,20 @@ public class AudioStateHook extends MethodHook {
 
     @Override
     public Object[] getTargetParam() {
-        return new Object[] { int.class, int.class };
+        return CakeReflection.findParameterTypesOrDefault(AudioPlaybackConfiguration.class, getTargetMethod(), int.class);
     }
 
     @Override
-    public XC_MethodHook getTargetHook() {
-        return new AbstractMethodHook() {
+    public CakeHooker.Callback getTargetHook() {
+        return new CakeHooker.Callback() {
             @Override
-            protected void afterMethod(MethodHookParam param) {
-                if (!((boolean) param.getResult()))
+            public void call(CakeHooker.AfterHookCallback callback) {
+                if (!((boolean) callback.result))
                     return;
 
-                int event = (int) param.args[0];
+                int event = (int) callback.getArgs()[0];
                 if (AudioHandler.LISTEN_EVENT.contains(event)) {
-                    AudioPlaybackConfigurationReflect reflect = new AudioPlaybackConfigurationReflect((AudioPlaybackConfiguration) param.thisObject);
+                    AudioPlaybackConfigurationReflect reflect = new AudioPlaybackConfigurationReflect((AudioPlaybackConfiguration) callback.getThisObject());
 
                     Handlers.audio.post(() -> {
                         List<AppRecord> appRecords = AppService.getByUid(reflect.getClientUid());

@@ -2,10 +2,9 @@ package nep.timeline.cirno.hooks.android.broadcast;
 
 import android.os.Build;
 
-import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedHelpers;
-import nep.timeline.cirno.framework.AbstractMethodHook;
 import nep.timeline.cirno.framework.MethodHook;
+import nep.timeline.cirno.reflect.CakeHooker;
+import nep.timeline.cirno.reflect.CakeReflection;
 import nep.timeline.cirno.services.ProcessService;
 import nep.timeline.cirno.utils.SystemChecker;
 import nep.timeline.cirno.virtuals.BroadcastRecord;
@@ -35,25 +34,25 @@ public class BroadcastDeliveryHook extends MethodHook {
     }
 
     @Override
-    public XC_MethodHook getTargetHook() {
-        return new AbstractMethodHook() {
+    public CakeHooker.Callback getTargetHook() {
+        return new CakeHooker.Callback() {
             @Override
-            protected void beforeMethod(XC_MethodHook.MethodHookParam param) {
-                Object record = param.args[0];
+            public void call(CakeHooker.BeforeHookCallback callback) {
+                Object record = callback.getArgs()[0];
                 if (record == null)
                     return;
 
                 BroadcastRecord broadcastRecord = new BroadcastRecord(record);
 
-                Object filter = param.args[1];
+                Object filter = callback.getArgs()[1];
                 if (filter == null)
                     return;
 
-                Object receiver = XposedHelpers.getObjectField(filter, "receiverList");
+                Object receiver = CakeReflection.getObjectField(filter, "receiverList");
                 if (receiver == null)
                     return;
 
-                Object app = XposedHelpers.getObjectField(receiver, "app");
+                Object app = CakeReflection.getObjectField(receiver, "app");
                 if (app == null)
                     return;
 
@@ -62,8 +61,8 @@ public class BroadcastDeliveryHook extends MethodHook {
                     return;
 
                 if (processRecord.isFrozen()) {
-                    broadcastRecord.skippedDelivery((int) param.args[3]);
-                    param.setResult(null);
+                    broadcastRecord.skippedDelivery((int) callback.getArgs()[3]);
+                    callback.returnAndSkip(null);
                 }
             }
         };

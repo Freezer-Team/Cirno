@@ -2,7 +2,7 @@ package nep.timeline.cirno.virtuals;
 
 import android.media.AudioPlaybackConfiguration;
 
-import de.robv.android.xposed.XposedHelpers;
+import nep.timeline.cirno.reflect.CakeReflection;
 
 public class AudioPlaybackConfigurationReflect {
     private final AudioPlaybackConfiguration instance;
@@ -12,18 +12,18 @@ public class AudioPlaybackConfigurationReflect {
     }
 
     public int getPlayerInterfaceId() {
-        return (int) XposedHelpers.callMethod(this.instance, "getPlayerInterfaceId");
+        return (int) CakeReflection.callMethod(this.instance, "getPlayerInterfaceId");
     }
 
     public int getClientUid() {
-        return (int) XposedHelpers.callMethod(this.instance, "getClientUid");
+        return (int) CakeReflection.callMethod(this.instance, "getClientUid");
     }
 
     public int getClientPid() {
-        return (int) XposedHelpers.callMethod(this.instance, "getClientPid");
+        return (int) CakeReflection.callMethod(this.instance, "getClientPid");
     }
 
     public int getPlayerType() {
-        return (int) XposedHelpers.callMethod(this.instance, "getPlayerType");
+        return (int) CakeReflection.callMethod(this.instance, "getPlayerType");
     }
 }

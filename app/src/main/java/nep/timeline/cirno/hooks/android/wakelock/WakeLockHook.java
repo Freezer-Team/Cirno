@@ -4,10 +4,9 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.WorkSource;
 
-import de.robv.android.xposed.XC_MethodHook;
 import nep.timeline.cirno.entity.AppRecord;
-import nep.timeline.cirno.framework.AbstractMethodHook;
 import nep.timeline.cirno.framework.MethodHook;
+import nep.timeline.cirno.reflect.CakeHooker;
 import nep.timeline.cirno.services.AppService;
 import nep.timeline.cirno.utils.PKGUtils;
 
@@ -34,19 +33,19 @@ public class WakeLockHook extends MethodHook {
     }
 
     @Override
-    public XC_MethodHook getTargetHook() {
-        return new AbstractMethodHook() {
+    public CakeHooker.Callback getTargetHook() {
+        return new CakeHooker.Callback() {
             @Override
-            protected void beforeMethod(XC_MethodHook.MethodHookParam param) {
-                String packageName = (String) param.args[4];
-                int uid = (int) param.args[7];
+            public void call(CakeHooker.BeforeHookCallback callback) {
+                String packageName = (String) callback.getArgs()[4];
+                int uid = (int) callback.getArgs()[7];
 
                 AppRecord appRecord = AppService.get(packageName, PKGUtils.getUserId(uid));
                 if (appRecord == null)
                     return;
 
                 if (appRecord.isFrozen())
-                    param.setResult(null);
+                    callback.returnAndSkip(null);
             }
         };
     }

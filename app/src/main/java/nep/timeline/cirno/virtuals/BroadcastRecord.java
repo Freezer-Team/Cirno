@@ -1,6 +1,6 @@
 package nep.timeline.cirno.virtuals;
 
-import de.robv.android.xposed.XposedHelpers;
+import nep.timeline.cirno.reflect.CakeReflection;
 
 public class BroadcastRecord {
     private final Object instance;
@@ -10,7 +10,7 @@ public class BroadcastRecord {
     }
 
     public void setDelivery(int index, int value) {
-        ((int[]) XposedHelpers.getObjectField(this.instance, "delivery"))[index] = value;
+        ((int[]) CakeReflection.getObjectField(this.instance, "delivery"))[index] = value;
     }
 
     public void skippedDelivery(int index) {

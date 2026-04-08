@@ -4,15 +4,15 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 
-import de.robv.android.xposed.XposedHelpers;
 import lombok.Setter;
+import nep.timeline.cirno.reflect.CakeReflection;
 
 public class ActivityManagerService {
     @Setter
     public static volatile Object instance;
 
     public static Context getContext() {
-        return (Context) XposedHelpers.getObjectField(instance, "mContext");
+        return (Context) CakeReflection.getObjectField(instance, "mContext");
     }
 
     public static ApplicationInfo getApplicationInfo(String packageName, int userId) {
@@ -23,7 +23,7 @@ public class ActivityManagerService {
             PackageManager packageManager = context.getPackageManager();
             if (packageManager == null)
                 return null;
-            return (ApplicationInfo) XposedHelpers.callMethod(packageManager, "getApplicationInfoAsUser", packageName, PackageManager.GET_META_DATA | PackageManager.GET_SIGNING_CERTIFICATES, userId);
+            return (ApplicationInfo) CakeReflection.callMethod(packageManager, "getApplicationInfoAsUser", packageName, PackageManager.GET_META_DATA | PackageManager.GET_SIGNING_CERTIFICATES, userId);
         } catch (Throwable ignored) {
 
         }
@@ -31,7 +31,7 @@ public class ActivityManagerService {
     }
 
     public static int getCurrentOrTargetUserId() {
-        return (int) XposedHelpers.callMethod(XposedHelpers.getObjectField(instance, "mUserController"), "getCurrentOrTargetUserId");
+        return (int) CakeReflection.callMethod(CakeReflection.getObjectField(instance, "mUserController"), "getCurrentOrTargetUserId");
     }
 
     public static String[] getPackagesForUid(int uid) {
@@ -45,6 +45,6 @@ public class ActivityManagerService {
     }
 
     public static Object getPidsSelfLocked() {
-        return XposedHelpers.getObjectField(instance, "mPidsSelfLocked");
+        return CakeReflection.getObjectField(instance, "mPidsSelfLocked");
     }
 }

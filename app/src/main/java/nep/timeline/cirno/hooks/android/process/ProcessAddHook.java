@@ -1,7 +1,7 @@
 package nep.timeline.cirno.hooks.android.process;
 
-import nep.timeline.cirno.framework.AbstractMethodHook;
 import nep.timeline.cirno.framework.MethodHook;
+import nep.timeline.cirno.reflect.CakeHooker;
 import nep.timeline.cirno.services.ProcessService;
 
 public class ProcessAddHook extends MethodHook {
@@ -25,11 +25,11 @@ public class ProcessAddHook extends MethodHook {
     }
 
     @Override
-    public AbstractMethodHook getTargetHook() {
-        return new AbstractMethodHook() {
+    public CakeHooker.Callback getTargetHook() {
+        return new CakeHooker.Callback() {
             @Override
-            protected void afterMethod(MethodHookParam param) {
-                Object record = param.args[0];
+            public void call(CakeHooker.AfterHookCallback callback) {
+                Object record = callback.getArgs()[0];
                 if (record == null)
                     return;
                 ProcessService.addProcessRecord(record);

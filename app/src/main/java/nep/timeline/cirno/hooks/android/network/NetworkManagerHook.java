@@ -2,9 +2,8 @@ package nep.timeline.cirno.hooks.android.network;
 
 import android.os.Build;
 
-import de.robv.android.xposed.XC_MethodHook;
-import nep.timeline.cirno.framework.AbstractMethodHook;
 import nep.timeline.cirno.framework.MethodHook;
+import nep.timeline.cirno.reflect.CakeHooker;
 import nep.timeline.cirno.services.NetworkManagementService;
 
 public class NetworkManagerHook extends MethodHook {
@@ -28,11 +27,11 @@ public class NetworkManagerHook extends MethodHook {
     }
 
     @Override
-    public XC_MethodHook getTargetHook() {
-        return new AbstractMethodHook() {
+    public CakeHooker.Callback getTargetHook() {
+        return new CakeHooker.Callback() {
             @Override
-            protected void afterMethod(XC_MethodHook.MethodHookParam param) {
-                NetworkManagementService.setInstance(param.thisObject, classLoader);
+            public void call(CakeHooker.AfterHookCallback callback) {
+                NetworkManagementService.setInstance(callback.getThisObject(), classLoader);
             }
         };
     }

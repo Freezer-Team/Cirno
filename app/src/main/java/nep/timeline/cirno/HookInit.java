@@ -1,34 +1,26 @@
 package nep.timeline.cirno;
 
+import androidx.annotation.NonNull;
+
 import java.io.File;
 
-import de.robv.android.xposed.IXposedHookLoadPackage;
-import de.robv.android.xposed.XposedBridge;
-import de.robv.android.xposed.XposedHelpers;
-import de.robv.android.xposed.callbacks.XC_LoadPackage;
+import io.github.libxposed.api.XposedModule;
+import nep.timeline.cirno.framework.XposedInstance;
+import nep.timeline.cirno.log.XposedLog;
 import nep.timeline.cirno.master.AndroidHooks;
+import nep.timeline.cirno.reflect.CakeHooker;
 
-public class HookInit implements IXposedHookLoadPackage {
+public class HookInit extends XposedModule {
     @Override
-    public void handleLoadPackage(XC_LoadPackage.LoadPackageParam packageParam) {
-        String packageName = packageParam.packageName;
-        ClassLoader classLoader = GlobalVars.classLoader = packageParam.classLoader;
+    public void onModuleLoaded(@NonNull ModuleLoadedParam param) {
+        XposedInstance.setModule(this);
+        CakeHooker.setXposedModule(this);
+    }
 
-        if (BuildConfig.APPLICATION_ID.equals(packageName)) {
-            Class<?> globalVars = XposedHelpers.findClassIfExists(GlobalVars.class.getTypeName(), classLoader);
-
-            if (globalVars == null) {
-                XposedBridge.log(GlobalVars.TAG + " -> Failed to set module active.");
-                return;
-            }
-
-            XposedHelpers.setStaticBooleanField(globalVars, "isModuleActive", true);
-            XposedHelpers.setStaticIntField(globalVars, "XposedVersion", XposedBridge.getXposedVersion());
-            return;
-        }
-
-        if (!packageName.equals("android"))
-            return;
+    @Override
+    public void onSystemServerStarting(@NonNull SystemServerStartingParam param) {
+        ClassLoader classLoader = param.getClassLoader();
+        CakeHooker.setHostClassLoader(classLoader);
 
         try {
             File source = new File(GlobalVars.LOG_DIR, "current.log");
@@ -37,8 +29,7 @@ public class HookInit implements IXposedHookLoadPackage {
             boolean renameTo = source.renameTo(dest);
             AndroidHooks.start(classLoader);
         } catch (Throwable throwable) {
-            XposedBridge.log("Cirno (" + packageName + ") -> Hook failed:");
-            XposedBridge.log(throwable);
+            XposedLog.e("Hook failed:", throwable);
         }
     }
 }

@@ -42,10 +42,11 @@ configure<ApplicationExtension> {
 dependencies {
     implementation(libs.gson)
     implementation(libs.commons.io)
-    compileOnly("de.robv.android.xposed:api:82:sources")
-    compileOnly("de.robv.android.xposed:api:82")
+    compileOnly(libs.api)
+    implementation(libs.service)
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
+    implementation(libs.commons.lang3)
     implementation(libs.chrisbanes.haze)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

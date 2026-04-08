@@ -2,8 +2,8 @@ package nep.timeline.cirno.virtuals;
 
 import android.os.IBinder;
 
-import de.robv.android.xposed.XposedHelpers;
 import lombok.Getter;
+import nep.timeline.cirno.reflect.CakeReflection;
 
 @Getter
 public class ILocationListener {
@@ -17,6 +17,6 @@ public class ILocationListener {
         if (instance == null)
             return null;
 
-        return (IBinder) XposedHelpers.callMethod(instance, "asBinder");
+        return (IBinder) CakeReflection.callMethod(instance, "asBinder");
     }
 }

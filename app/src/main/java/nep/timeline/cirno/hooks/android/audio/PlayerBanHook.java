@@ -4,11 +4,10 @@ import android.media.AudioPlaybackConfiguration;
 
 import java.util.List;
 
-import de.robv.android.xposed.XC_MethodHook;
 import nep.timeline.cirno.entity.AppRecord;
-import nep.timeline.cirno.framework.AbstractMethodHook;
 import nep.timeline.cirno.framework.MethodHook;
 import nep.timeline.cirno.handlers.AudioHandler;
+import nep.timeline.cirno.reflect.CakeHooker;
 import nep.timeline.cirno.services.AppService;
 import nep.timeline.cirno.threads.Handlers;
 import nep.timeline.cirno.virtuals.AudioPlaybackConfigurationReflect;
@@ -34,12 +33,12 @@ public class PlayerBanHook extends MethodHook {
     }
 
     @Override
-    public XC_MethodHook getTargetHook() {
-        return new AbstractMethodHook() {
+    public CakeHooker.Callback getTargetHook() {
+        return new CakeHooker.Callback() {
             @Override
-            protected void afterMethod(MethodHookParam param) {
-                if ((boolean) param.getResult()) {
-                    Object configuration = param.args[0];
+            public void call(CakeHooker.AfterHookCallback callback) {
+                if ((boolean) callback.result) {
+                    Object configuration = callback.getArgs()[0];
                     if (configuration == null)
                         return;
 

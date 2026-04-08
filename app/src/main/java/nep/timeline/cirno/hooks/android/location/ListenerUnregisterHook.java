@@ -5,11 +5,10 @@ import android.os.IBinder;
 
 import java.util.Set;
 
-import de.robv.android.xposed.XC_MethodHook;
 import nep.timeline.cirno.entity.AppRecord;
-import nep.timeline.cirno.framework.AbstractMethodHook;
 import nep.timeline.cirno.framework.MethodHook;
 import nep.timeline.cirno.handlers.LocationHandler;
+import nep.timeline.cirno.reflect.CakeHooker;
 import nep.timeline.cirno.services.ProcessService;
 import nep.timeline.cirno.threads.Handlers;
 import nep.timeline.cirno.virtuals.ILocationListener;
@@ -36,11 +35,11 @@ public class ListenerUnregisterHook extends MethodHook {
     }
 
     @Override
-    public XC_MethodHook getTargetHook() {
-        return new AbstractMethodHook() {
+    public CakeHooker.Callback getTargetHook() {
+        return new CakeHooker.Callback() {
             @Override
-            protected void afterMethod(MethodHookParam param) {
-                ILocationListener listener = new ILocationListener(param.args[0]);
+            public void call(CakeHooker.AfterHookCallback callback) {
+                ILocationListener listener = new ILocationListener(callback.getArgs()[0]);
                 int pid = Binder.getCallingPid();
 
                 Handlers.location.post(() -> {

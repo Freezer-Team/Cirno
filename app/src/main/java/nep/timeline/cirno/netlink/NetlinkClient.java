@@ -17,12 +17,10 @@ import lombok.Getter;
 import nep.timeline.cirno.log.Log;
 
 public class NetlinkClient implements Closeable {
-    private static final String TAG = "NetlinkSocket";
     private static final int SOCKET_RECV_BUFSIZE = 64 * 1024;
     private static final int DEFAULT_RECV_BUFSIZE = 8 * 1024;
     @Getter
     final private FileDescriptor mDescriptor;
-    private NetlinkSocketAddress mAddr;
     private long mLastRecvTimeoutMs;
     private long mLastSendTimeoutMs;
     private final ClassLoader classLoader;
@@ -36,22 +34,10 @@ public class NetlinkClient implements Closeable {
                 OsConstants.SO_RCVBUF, SOCKET_RECV_BUFSIZE);
     }
 
-    public NetlinkSocketAddress getLocalAddress() throws ErrnoException {
-        return (NetlinkSocketAddress) Os.getsockname(mDescriptor);
-    }
-    public void bind(NetlinkSocketAddress localAddr) throws ErrnoException, SocketException {
-        Os.bind(mDescriptor, localAddr);
-    }
     public void bind(SocketAddress localAddr) throws ErrnoException, SocketException {
         Os.bind(mDescriptor, localAddr);
     }
-    public void connectTo(NetlinkSocketAddress peerAddr)
-            throws ErrnoException, SocketException {
-        Os.connect(mDescriptor, peerAddr);
-    }
-    public void connectToKernel() throws ErrnoException, SocketException {
-        connectTo(new NetlinkSocketAddress(0, 0));
-    }
+
     /**
      * Wait indefinitely (or until underlying socket error) for a
      * netlink message of at most DEFAULT_RECV_BUFSIZE size.

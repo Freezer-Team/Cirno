@@ -69,7 +69,7 @@ public class BinderService {
                         return;
                     }
 
-                    netlinkClient.bind((SocketAddress) new NetlinkSocketAddress(100).toInstance(classLoader));
+                    netlinkClient.bind((SocketAddress) new NetlinkSocketAddress(100).toInstance());
 
                     isRunning = true;
 

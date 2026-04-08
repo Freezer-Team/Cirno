@@ -2,12 +2,11 @@ package nep.timeline.cirno.hooks.android.vpn;
 
 import android.net.NetworkInfo;
 
-import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedHelpers;
 import nep.timeline.cirno.entity.AppRecord;
-import nep.timeline.cirno.framework.AbstractMethodHook;
 import nep.timeline.cirno.framework.MethodHook;
 import nep.timeline.cirno.log.Log;
+import nep.timeline.cirno.reflect.CakeHooker;
+import nep.timeline.cirno.reflect.CakeReflection;
 import nep.timeline.cirno.services.AppService;
 import nep.timeline.cirno.services.FreezerService;
 import nep.timeline.cirno.threads.FreezerHandler;
@@ -34,13 +33,13 @@ public class VpnStateHook extends MethodHook {
     }
 
     @Override
-    public XC_MethodHook getTargetHook() {
-        return new AbstractMethodHook() {
+    public CakeHooker.Callback getTargetHook() {
+        return new CakeHooker.Callback() {
             @Override
-            protected void beforeMethod(XC_MethodHook.MethodHookParam param) {
-                String state = param.args[0].toString();
-                int uid = XposedHelpers.getIntField(param.thisObject, "mOwnerUID");
-                String packageName = (String) XposedHelpers.getObjectField(param.thisObject, "mPackage");
+            public void call(CakeHooker.BeforeHookCallback callback) {
+                String state = callback.getArgs()[0].toString();
+                int uid = CakeReflection.getIntField(callback.getThisObject(), "mOwnerUID");
+                String packageName = (String) CakeReflection.getObjectField(callback.getThisObject(), "mPackage");
 
                 AppRecord appRecord = AppService.get(packageName, PKGUtils.getUserId(uid));
                 if (appRecord != null) {

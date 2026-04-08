@@ -6,10 +6,9 @@ import android.os.Build;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedHelpers;
-import nep.timeline.cirno.framework.AbstractMethodHook;
 import nep.timeline.cirno.framework.MethodHook;
+import nep.timeline.cirno.reflect.CakeHooker;
+import nep.timeline.cirno.reflect.CakeReflection;
 import nep.timeline.cirno.utils.AnrHelper;
 
 public class ANRErrorStateHook extends MethodHook {
@@ -35,14 +34,15 @@ public class ANRErrorStateHook extends MethodHook {
     }
 
     @Override
-    public XC_MethodHook getTargetHook() {
-        return new AbstractMethodHook() {
+    public CakeHooker.Callback getTargetHook() {
+        return new CakeHooker.Callback() {
             @Override
-            protected void beforeMethod(MethodHookParam param) {
-                Object app = XposedHelpers.getObjectField(param.thisObject, "mApp");
+            public void call(CakeHooker.BeforeHookCallback callback) {
+                Object app = CakeReflection.getObjectField(callback.getThisObject(), "mApp");
                 if (app == null)
                     return;
-                AnrHelper.processingAnr(param, app);
+                if (AnrHelper.blockANR(app))
+                    callback.returnAndSkip(null);
             }
         };
     }

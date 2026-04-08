@@ -2,9 +2,8 @@ package nep.timeline.cirno.hooks.android.signal;
 
 import android.os.Process;
 
-import de.robv.android.xposed.XC_MethodHook;
-import nep.timeline.cirno.framework.AbstractMethodHook;
 import nep.timeline.cirno.framework.MethodHook;
+import nep.timeline.cirno.reflect.CakeHooker;
 import nep.timeline.cirno.services.ProcessService;
 import nep.timeline.cirno.virtuals.ProcessRecord;
 
@@ -29,12 +28,12 @@ public class SendSignalQuietHook extends MethodHook {
     }
 
     @Override
-    public XC_MethodHook getTargetHook() {
-        return new AbstractMethodHook() {
+    public CakeHooker.Callback getTargetHook() {
+        return new CakeHooker.Callback() {
             @Override
-            protected void beforeMethod(MethodHookParam param) {
-                int pid = (int) param.args[0];
-                int signal = (int) param.args[1];
+            public void call(CakeHooker.BeforeHookCallback callback) {
+                int pid = (int) callback.getArgs()[0];
+                int signal = (int) callback.getArgs()[1];
                 if (signal != Process.SIGNAL_KILL)
                     return;
 

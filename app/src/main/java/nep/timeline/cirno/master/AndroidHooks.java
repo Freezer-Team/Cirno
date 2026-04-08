@@ -23,6 +23,8 @@ import nep.timeline.cirno.hooks.android.intent.PendingIntentHook;
 import nep.timeline.cirno.hooks.android.location.ListenerRegisterHook;
 import nep.timeline.cirno.hooks.android.location.ListenerUnregisterHook;
 import nep.timeline.cirno.hooks.android.network.NetworkManagerHook;
+import nep.timeline.cirno.hooks.android.optimizer.CacheEnableFreezerHook;
+import nep.timeline.cirno.hooks.android.optimizer.CacheUseFreezerHook;
 import nep.timeline.cirno.hooks.android.process.ProcessAddHook;
 import nep.timeline.cirno.hooks.android.process.ProcessRemoveHook;
 import nep.timeline.cirno.hooks.android.recorder.RecorderEventHook;
@@ -39,6 +41,9 @@ public class AndroidHooks {
         FileObserver fileObserver = new ConfigFileObserver();
         fileObserver.startWatching();
 
+        // Cached
+        new CacheEnableFreezerHook(classLoader);
+        new CacheUseFreezerHook(classLoader);
         // ANR
         new ANRHook(classLoader);
         new ANRErrorStateHook(classLoader);

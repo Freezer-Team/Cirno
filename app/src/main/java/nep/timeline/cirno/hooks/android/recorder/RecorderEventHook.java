@@ -4,11 +4,10 @@ import android.os.Binder;
 
 import java.util.List;
 
-import de.robv.android.xposed.XC_MethodHook;
 import nep.timeline.cirno.entity.AppRecord;
-import nep.timeline.cirno.framework.AbstractMethodHook;
 import nep.timeline.cirno.framework.MethodHook;
 import nep.timeline.cirno.handlers.RecordingHandler;
+import nep.timeline.cirno.reflect.CakeHooker;
 import nep.timeline.cirno.services.AppService;
 
 public class RecorderEventHook extends MethodHook {
@@ -32,13 +31,13 @@ public class RecorderEventHook extends MethodHook {
     }
 
     @Override
-    public XC_MethodHook getTargetHook() {
-        return new AbstractMethodHook() {
+    public CakeHooker.Callback getTargetHook() {
+        return new CakeHooker.Callback() {
             @Override
-            protected void beforeMethod(MethodHookParam param) {
+            public void call(CakeHooker.BeforeHookCallback callback) {
                 int uid = Binder.getCallingUid();
-                int riid = (int) param.args[0];
-                int event = (int) param.args[1];
+                int riid = (int) callback.getArgs()[0];
+                int event = (int) callback.getArgs()[1];
 
                 if (riid == RecordingHandler.RECORD_RIID_INVALID)
                     return;

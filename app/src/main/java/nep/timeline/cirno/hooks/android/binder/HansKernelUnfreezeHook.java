@@ -1,8 +1,7 @@
 package nep.timeline.cirno.hooks.android.binder;
 
-import de.robv.android.xposed.XC_MethodHook;
-import nep.timeline.cirno.framework.AbstractMethodHook;
 import nep.timeline.cirno.framework.MethodHook;
+import nep.timeline.cirno.reflect.CakeHooker;
 import nep.timeline.cirno.services.BinderService;
 import nep.timeline.cirno.services.FreezerService;
 import nep.timeline.cirno.utils.SystemChecker;
@@ -28,19 +27,19 @@ public class HansKernelUnfreezeHook extends MethodHook {
     }
 
     @Override
-    public XC_MethodHook getTargetHook() {
-        return new AbstractMethodHook() {
+    public CakeHooker.Callback getTargetHook() {
+        return new CakeHooker.Callback() {
             @Override
-            protected void beforeMethod(MethodHookParam param) {
+            public void call(CakeHooker.BeforeHookCallback callback) {
                 if (BinderService.received) {
                     unhook();
                     return;
                 }
 
-                int type = (int) param.args[0];
+                int type = (int) callback.getArgs()[0];
                 if (type != 1) // Sync binder
                     return;
-                int target = (int) param.args[4];
+                int target = (int) callback.getArgs()[4];
 
                 FreezerService.temporaryUnfreezeIfNeed(target, "Binder", 3000);
             }

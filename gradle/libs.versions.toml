@@ -1,6 +1,8 @@
 [versions]
 agp = "9.1.0"
+api = "101.0.1"
 commonsIo = "2.21.0"
+commonsLang3 = "3.20.0"
 gson = "2.13.2"
 kotlin = "2.3.20"
 coreKtx = "1.18.0"
@@ -13,10 +15,13 @@ composeBom = "2026.03.01"
 material-icons-core = "1.7.8"
 haze = "1.7.2"
 lombok = "1.18.44"
+service = "101.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+api = { module = "io.github.libxposed:api", version.ref = "api" }
 commons-io = { module = "commons-io:commons-io", version.ref = "commonsIo" }
+commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commonsLang3" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -34,6 +39,7 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 androidx-material-icons-core = { group = "androidx.compose.material", name = "material-icons-core" }
 chrisbanes-haze = { group = "dev.chrisbanes.haze", name = "haze", version.ref = "haze" }
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+service = { module = "io.github.libxposed:service", version.ref = "service" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

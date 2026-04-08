@@ -7,10 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import de.robv.android.xposed.XC_MethodHook;
+import nep.timeline.cirno.reflect.CakeHooker;
 import nep.timeline.cirno.virtuals.ActivityRecord;
 import nep.timeline.cirno.entity.AppRecord;
-import nep.timeline.cirno.framework.AbstractMethodHook;
 import nep.timeline.cirno.framework.MethodHook;
 import nep.timeline.cirno.log.Log;
 import nep.timeline.cirno.services.FreezerService;
@@ -40,16 +39,16 @@ public class ActivityStatsHook extends MethodHook {
     }
 
     @Override
-    public XC_MethodHook getTargetHook() {
-        return new AbstractMethodHook() {
+    public CakeHooker.Callback getTargetHook() {
+        return new CakeHooker.Callback() {
             @Override
-            protected void beforeMethod(MethodHookParam param) {
-                int event = (int) param.args[1];
+            public void call(CakeHooker.BeforeHookCallback callback) {
+                int event = (int) callback.getArgs()[1];
 
                 if (!events.contains(event))
                     return;
 
-                Object activityObject = param.args[0];
+                Object activityObject = callback.getArgs()[0];
                 if (activityObject == null)
                     return;
 

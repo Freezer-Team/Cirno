@@ -1,8 +1,7 @@
 package nep.timeline.cirno.hooks.android.activity;
 
-import de.robv.android.xposed.XC_MethodHook;
-import nep.timeline.cirno.framework.AbstractMethodHook;
 import nep.timeline.cirno.framework.MethodHook;
+import nep.timeline.cirno.reflect.CakeHooker;
 import nep.timeline.cirno.services.ActivityManagerService;
 
 public class ActivityManagerServiceHook extends MethodHook {
@@ -26,11 +25,11 @@ public class ActivityManagerServiceHook extends MethodHook {
     }
 
     @Override
-    public XC_MethodHook getTargetHook() {
-        return new AbstractMethodHook() {
+    public CakeHooker.Callback getTargetHook() {
+        return new CakeHooker.Callback() {
             @Override
-            protected void beforeMethod(MethodHookParam param) {
-                ActivityManagerService.setInstance(param.thisObject);
+            public void call(CakeHooker.BeforeHookCallback callback) {
+                ActivityManagerService.setInstance(callback.getThisObject());
             }
         };
     }

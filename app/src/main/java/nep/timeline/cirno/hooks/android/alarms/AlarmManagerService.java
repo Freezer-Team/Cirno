@@ -1,9 +1,8 @@
 package nep.timeline.cirno.hooks.android.alarms;
 
-import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedHelpers;
-import nep.timeline.cirno.framework.AbstractMethodHook;
 import nep.timeline.cirno.framework.MethodHook;
+import nep.timeline.cirno.reflect.CakeHooker;
+import nep.timeline.cirno.reflect.CakeReflection;
 import nep.timeline.cirno.utils.ForceAppStandbyListener;
 
 public class AlarmManagerService extends MethodHook {
@@ -27,11 +26,11 @@ public class AlarmManagerService extends MethodHook {
     }
 
     @Override
-    public XC_MethodHook getTargetHook() {
-        return new AbstractMethodHook() {
+    public CakeHooker.Callback getTargetHook() {
+        return new CakeHooker.Callback() {
             @Override
-            protected void beforeMethod(MethodHookParam param) {
-                ForceAppStandbyListener.setInstance(XposedHelpers.getObjectField(param.thisObject, "mForceAppStandbyListener"));
+            public void call(CakeHooker.BeforeHookCallback callback) {
+                ForceAppStandbyListener.setInstance(CakeReflection.getObjectField(callback.getThisObject(), "mForceAppStandbyListener"));
             }
         };
     }

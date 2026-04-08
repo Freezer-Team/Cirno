@@ -7,11 +7,10 @@ import android.os.IBinder;
 
 import java.util.Set;
 
-import de.robv.android.xposed.XC_MethodHook;
 import nep.timeline.cirno.entity.AppRecord;
-import nep.timeline.cirno.framework.AbstractMethodHook;
 import nep.timeline.cirno.framework.MethodHook;
 import nep.timeline.cirno.handlers.LocationHandler;
+import nep.timeline.cirno.reflect.CakeHooker;
 import nep.timeline.cirno.services.AppService;
 import nep.timeline.cirno.threads.Handlers;
 import nep.timeline.cirno.utils.PKGUtils;
@@ -38,18 +37,18 @@ public class ListenerRegisterHook extends MethodHook {
     }
 
     @Override
-    public XC_MethodHook getTargetHook() {
-        return new AbstractMethodHook() {
+    public CakeHooker.Callback getTargetHook() {
+        return new CakeHooker.Callback() {
             @Override
-            protected void afterMethod(MethodHookParam param) {
-                boolean isGPS = LocationManager.GPS_PROVIDER.equals(param.args[0]);
+            public void call(CakeHooker.AfterHookCallback callback) {
+                boolean isGPS = LocationManager.GPS_PROVIDER.equals(callback.getArgs()[0]);
                 if (!isGPS)
                     return;
 
-                String packageName = (String) param.args[3];
+                String packageName = (String) callback.getArgs()[3];
                 int uid = Binder.getCallingUid();
 
-                ILocationListener listener = new ILocationListener(param.args[2]);
+                ILocationListener listener = new ILocationListener(callback.getArgs()[2]);
 
                 Handlers.location.post(() -> {
                     AppRecord appRecord = AppService.get(packageName, PKGUtils.getUserId(uid));

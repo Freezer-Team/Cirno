@@ -1,21 +1,19 @@
 package nep.timeline.cirno.utils;
 
-import de.robv.android.xposed.XC_MethodHook;
 import nep.timeline.cirno.entity.AppRecord;
 import nep.timeline.cirno.services.ProcessService;
 import nep.timeline.cirno.virtuals.ProcessRecord;
 
 public class AnrHelper {
-    public static void processingAnr(XC_MethodHook.MethodHookParam param, Object app) {
+    public static boolean blockANR(Object app) {
         if (app == null)
-            return;
+            return false;
         ProcessRecord processRecord = ProcessService.getProcessRecord(app);
         if (processRecord == null)
-            return;
+            return false;
         AppRecord appRecord = processRecord.getAppRecord();
         if (appRecord == null)
-            return;
-        if (!appRecord.isSystem())
-            param.setResult(null);
+            return false;
+        return !appRecord.isSystem();
     }
 }

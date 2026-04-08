@@ -1,7 +1,7 @@
 package nep.timeline.cirno.entity;
 
-import de.robv.android.xposed.XposedHelpers;
 import lombok.Getter;
+import nep.timeline.cirno.reflect.CakeReflection;
 
 @Getter
 public class PendingIntentKey {
@@ -11,7 +11,7 @@ public class PendingIntentKey {
 
     public PendingIntentKey(Object key) {
         this.instance = key;
-        this.packageName = (String) XposedHelpers.getObjectField(key, "packageName");
-        this.userId = XposedHelpers.getIntField(key, "userId");
+        this.packageName = (String) CakeReflection.getObjectField(key, "packageName");
+        this.userId = CakeReflection.getIntField(key, "userId");
     }
 }

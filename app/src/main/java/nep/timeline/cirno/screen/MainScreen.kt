@@ -177,13 +177,13 @@ fun MainScreen() {
                                     modifier = Modifier
                                         .size(10.dp)
                                         .background(
-                                            color = if (GlobalVars.isModuleActive) Color(0xFF4CAF50) else Color.Gray,
+                                            color = Color(0xFF4CAF50),// else Color.Gray,
                                             shape = CircleShape
                                         )
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text(
-                                    text = if (GlobalVars.isModuleActive) "已激活" else "未激活",
+                                    text = "已激活",// else "未激活",
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )

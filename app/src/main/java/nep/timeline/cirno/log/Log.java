@@ -8,7 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import de.robv.android.xposed.XposedBridge;
 import nep.timeline.cirno.GlobalVars;
 import nep.timeline.cirno.threads.Handlers;
 import nep.timeline.cirno.utils.RWUtils;
@@ -53,15 +52,11 @@ public class Log {
         Handlers.log.post(() -> fileLog(simpleDateFormat.format(new Date()) + " " + level.toUpperCase() + " -> " + msg));
     }
 
-    public static void xposedLog(String msg) {
-        XposedBridge.log(msg);
-    }
-
     public static void fileLog(String msg) {
         try {
             RWUtils.writeStringToFile(currentLog, msg, true);
         } catch (IOException e) {
-            xposedLog("Log write failed: " + e.getMessage() + " msg: " + msg);
+            Log.e("Log write failed! msg: " + msg, e);
         }
     }
 }

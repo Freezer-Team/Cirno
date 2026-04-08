@@ -1,5 +1,7 @@
 package nep.timeline.cirno.services;
 
+import android.os.Build;
+
 import java.util.List;
 
 import nep.timeline.cirno.entity.AppRecord;
@@ -24,7 +26,13 @@ public class FreezerService {
         }
 
         Handlers.alarms.post(() -> ForceAppStandbyListener.removeAlarmsForUid(appRecord));
-        Handlers.network.post(() -> NetworkManagementService.socketDestroy(appRecord));
+        Handlers.network.post(() -> {
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                CachedAppOptimizer.reportOneUidFrozenStateChanged(appRecord.getUid(), true);
+                return;
+            }
+            NetworkManagementService.socketDestroy(appRecord);
+        });
         appRecord.setFrozen(true);
     }
 
@@ -42,6 +50,8 @@ public class FreezerService {
             processRecord.setFrozen(false);
         }
 
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.VANILLA_ICE_CREAM)
+            Handlers.network.post(() -> CachedAppOptimizer.reportOneUidFrozenStateChanged(appRecord.getUid(), false));
         appRecord.setFrozen(false);
     }
 

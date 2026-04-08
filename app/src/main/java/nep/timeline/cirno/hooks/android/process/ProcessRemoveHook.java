@@ -1,7 +1,7 @@
 package nep.timeline.cirno.hooks.android.process;
 
-import nep.timeline.cirno.framework.AbstractMethodHook;
 import nep.timeline.cirno.framework.MethodHook;
+import nep.timeline.cirno.reflect.CakeHooker;
 import nep.timeline.cirno.services.ProcessService;
 
 public class ProcessRemoveHook extends MethodHook {
@@ -25,12 +25,12 @@ public class ProcessRemoveHook extends MethodHook {
     }
 
     @Override
-    public AbstractMethodHook getTargetHook() {
-        return new AbstractMethodHook() {
+    public CakeHooker.Callback getTargetHook() {
+        return new CakeHooker.Callback() {
             @Override
-            protected void beforeMethod(MethodHookParam param) {
-                String name = (String) param.args[0];
-                int uid = (int) param.args[1];
+            public void call(CakeHooker.BeforeHookCallback callback) {
+                String name = (String) callback.getArgs()[0];
+                int uid = (int) callback.getArgs()[1];
                 ProcessService.removeProcessRecord(name, uid);
             }
         };
