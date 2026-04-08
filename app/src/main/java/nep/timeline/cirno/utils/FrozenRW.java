@@ -16,7 +16,7 @@ public class FrozenRW {
 
     private static void writeFrozen(int uid, int pid, int frozenState) {
         if (!cgroupV2SysAppIsolated) {
-            RWUtils.writeFrozen(cgroupV2 + "/uid_" + uid + "/pid_" + pid + "/cgroup.freeze", 1);
+            RWUtils.writeFrozen(cgroupV2 + "/uid_" + uid + "/pid_" + pid + "/cgroup.freeze", frozenState);
             return;
         }
 
